@@ -1,22 +1,60 @@
 {
-  "name": "mapo-integrations-camomilla",
-  "private": true,
-  "description": "Camomilla-cms integrations for @mapomodule",
-  "author": "bnznamco <gabriele.baldi.01@gmail.com>",
+  "name": "@mapomodule/mapo-integrations-camomilla",
+  "version": "0.0.0",
+  "publishConfig": {
+    "access": "public"
+  },
+  "description": "Mapo integration for Camomilla CMS: Nitro proxy middleware with path rewriting and session sync",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/lotrekagency/mapo-integrations-camomilla.git"
   },
-  "workspaces": [
-    "packages/*"
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/module.d.mts",
+      "import": "./dist/module.mjs"
+    },
+    "./types": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
+    }
+  },
+  "files": [
+    "dist"
   ],
+  "packageManager": "pnpm@8.15.6",
   "scripts": {
-    "bootstrap": "lerna bootstrap",
-    "pub": "lerna publish --conventional-commits"
+    "dev": "nuxt-module-build build --stub --watch",
+    "build": "nuxt-module-build build",
+    "prepare": "nuxt-module-build build --stub",
+    "dev:prepare": "nuxt-module-build build --stub",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src",
+    "test": "vitest run",
+    "release": "pnpm build && semantic-release",
+    "release:dry": "semantic-release --dry-run"
+  },
+  "peerDependencies": {
+    "nuxt": ">=4.0.0"
   },
   "devDependencies": {
-    "eslint": "^7.24.0",
-    "eslint-plugin-vue": "^7.9.0",
-    "lerna": "^3.22.1"
+    "@commitlint/cli": "^20.5.0",
+    "@commitlint/config-conventional": "^20.5.0",
+    "@nuxt/kit": "4.4.2",
+    "@nuxt/module-builder": "^1.0.2",
+    "@nuxt/schema": "4.4.2",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^12.0.6",
+    "@semantic-release/npm": "^13.1.5",
+    "h3": "^1.15.3",
+    "nitropack": "^2.13.3",
+    "nuxt": "^4.4.2",
+    "semantic-release": "^24.2.0",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.5",
+    "vue": "^3.5.32"
   }
 }

@@ -1,0 +1,80 @@
+name: CD
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_mode:
+        description: "Release mode"
+        required: true
+        type: choice
+        options:
+          - normal
+          - dry-run
+        default: dry-run
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+  id-token: write
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    if: github.event.inputs.release_mode == 'normal'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 8.15.6
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Ensure npm >= 11.5.1 (required for OIDC trusted publishing)
+        run: npm install -g npm@latest
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Fallback only. With a Trusted Publisher configured on npmjs.com plus
+          # `id-token: write` above, npm authenticates via OIDC and this is
+          # ignored. Needed for the first publish of a brand-new package; remove
+          # once the package has a Trusted Publisher registered.
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: pnpm release
+
+  release_dryrun:
+    name: Release Dry Run
+    runs-on: ubuntu-latest
+    if: github.event.inputs.release_mode == 'dry-run'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 8.15.6
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Release Dry Run
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: pnpm release:dry
