@@ -8,7 +8,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lotrekagency/mapo-integrations-camomilla.git"
+    "url": "git+https://github.com/camomillacms/mapo-integrations-camomilla.git"
   },
   "type": "module",
   "exports": {
