@@ -48,11 +48,10 @@
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/github": "^12.0.6",
-    "@semantic-release/npm": "^13.1.5",
     "h3": "^1.15.3",
     "nitropack": "^2.13.3",
     "nuxt": "^4.4.2",
-    "semantic-release": "^24.2.0",
+    "semantic-release": "^25.0.5",
     "typescript": "^6.0.3",
     "vitest": "^4.1.5",
     "vue": "^3.5.32"

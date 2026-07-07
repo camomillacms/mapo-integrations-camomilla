@@ -46,11 +46,12 @@ jobs:
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # Fallback only. With a Trusted Publisher configured on npmjs.com plus
-          # `id-token: write` above, npm authenticates via OIDC and this is
-          # ignored. Needed for the first publish of a brand-new package; remove
-          # once the package has a Trusted Publisher registered.
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          # Tokenless publish via npm OIDC trusted publishing — NO NPM_TOKEN.
+          # Requires: a Trusted Publisher registered on npmjs.com for this package
+          # pointing at THIS GitHub repo + workflow file (cd.yml), npm >= 11.5.1
+          # (installed above) and `id-token: write` (set above).
+          # WARNING: defining NPM_TOKEN here at all — even empty — disables OIDC,
+          # because npm then tries the (empty) token instead of the OIDC exchange.
         run: pnpm release
 
   release_dryrun:
