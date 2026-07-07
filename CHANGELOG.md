@@ -1,3 +1,18 @@
+# [2.0.0-beta.1](https://github.com/camomillacms/mapo-integrations-camomilla/compare/v1.0.0...v2.0.0-beta.1) (2026-07-07)
+
+
+* feat!: rewrite Camomilla integration as a Nuxt 4 module ([2a93ce0](https://github.com/camomillacms/mapo-integrations-camomilla/commit/2a93ce060d88bdad845bb188b6844f835f2b5ba1))
+
+
+### Bug Fixes
+
+* update repository URL in package.json ([a7e6d68](https://github.com/camomillacms/mapo-integrations-camomilla/commit/a7e6d68ec6d093c1d26565310440b902c189b4b9))
+
+
+### BREAKING CHANGES
+
+* drops the Nuxt 2 module and the @mapomodule lerna layout; requires nuxt >= 4.
+
 # Change Log
 
 All notable changes to this project will be documented in this file.
