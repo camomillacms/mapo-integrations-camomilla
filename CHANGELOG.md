@@ -1,3 +1,10 @@
+# [2.0.0-beta.2](https://github.com/camomillacms/mapo-integrations-camomilla/compare/v2.0.0-beta.1...v2.0.0-beta.2) (2026-07-16)
+
+
+### Bug Fixes
+
+* publish real packages not stub ([bee1125](https://github.com/camomillacms/mapo-integrations-camomilla/commit/bee11255513777f0cb255791d784b2cdfe2415c0))
+
 # [2.0.0-beta.1](https://github.com/camomillacms/mapo-integrations-camomilla/compare/v1.0.0...v2.0.0-beta.1) (2026-07-07)
 
 
