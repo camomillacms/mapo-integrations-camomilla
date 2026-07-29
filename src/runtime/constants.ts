@@ -8,6 +8,8 @@ export const MAPO_AUTH_LOGIN_PATH = "/api/auth/login" as const;
 export const MAPO_AUTH_LOGOUT_PATH = "/api/auth/logout" as const;
 /** Mapo current-user endpoint path routed through this integration. */
 export const MAPO_USER_INFO_PATH = "/api/profiles/me" as const;
+/** Mapo Menu Manager endpoint path routed through this integration. */
+export const MAPO_MENUS_PATH = "/api/menus" as const;
 
 /** Default Django session cookie name from Camomilla backend. */
 export const DJANGO_SESSION_COOKIE = "sessionid" as const;
@@ -34,9 +36,17 @@ export const CAMOMILLA_MEDIA_FOLDERS_PATH =
   "/api/camomilla/media-folders" as const;
 /** Camomilla media endpoint. */
 export const CAMOMILLA_MEDIA_PATH = "/api/camomilla/media" as const;
+/** Camomilla menus endpoint. */
+export const CAMOMILLA_MENUS_PATH = "/api/camomilla/menus" as const;
 
 /** Camomilla auth endpoints used to trigger auth-specific cookie logic. */
 export const CAMOMILLA_AUTH_PATHS = [
   CAMOMILLA_AUTH_LOGIN_PATH,
   CAMOMILLA_AUTH_LOGOUT_PATH,
 ] as const;
+
+/**
+ * `/api/*` prefixes the proxy never intercepts: they are served by the Nuxt
+ * app itself. Consumers extend this list through `camomilla.skipPaths`.
+ */
+export const PROXY_SKIP_PATHS = ["/api/_nuxt_icon", "/api/mock"] as const;
