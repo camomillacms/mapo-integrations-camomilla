@@ -4,9 +4,11 @@ import {
   CAMOMILLA_AUTH_LOGOUT_PATH,
   CAMOMILLA_MEDIA_FOLDERS_PATH,
   CAMOMILLA_MEDIA_PATH,
+  CAMOMILLA_MENUS_PATH,
   CAMOMILLA_USER_CURRENT_PATH,
   MAPO_AUTH_LOGIN_PATH,
   MAPO_AUTH_LOGOUT_PATH,
+  MAPO_MENUS_PATH,
   MAPO_USER_INFO_PATH,
 } from "../../constants";
 
@@ -27,6 +29,8 @@ export function buildDefaultRewrites(base: string): CamomillaPathRewrite {
     // media-folders before media to avoid greedy match
     [`^${b}/api/media-folders`]: CAMOMILLA_MEDIA_FOLDERS_PATH,
     [`^${b}/api/media`]: CAMOMILLA_MEDIA_PATH,
+    // Menu Manager: /api/menus (+ /page_types, /:id) → Camomilla menus
+    [`^${b}${MAPO_MENUS_PATH}`]: CAMOMILLA_MENUS_PATH,
     [`^${b}/api`]: "/api",
   };
 }

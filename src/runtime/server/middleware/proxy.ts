@@ -30,6 +30,25 @@ const SKIP_REQUEST_HEADERS = new Set([
 ]);
 
 /**
+ * Upstream response headers dropped before forwarding.
+ *
+ * `fetch` transparently decodes the upstream body (gzip/br/deflate), so the
+ * body we forward is already decompressed: passing the original
+ * `content-encoding` through would make the browser try to decode plain bytes
+ * and fail. `content-length` is dropped for the same reason — it describes the
+ * compressed payload. Both are recomputed by Nitro when it sends the response.
+ * The rest are hop-by-hop headers that must not be proxied.
+ */
+const SKIP_RESPONSE_HEADERS = new Set([
+  "set-cookie",
+  "content-encoding",
+  "content-length",
+  "transfer-encoding",
+  "connection",
+  "keep-alive",
+]);
+
+/**
  * API proxy middleware for Camomilla integration.
  *
  * Flow overview:
@@ -48,14 +67,15 @@ export default defineEventHandler(async (event) => {
     syncCamomillaSession = false,
     pathRewrite: customPathRewrite = {},
     forwardedHeaders = [],
+    skipPaths = [],
   } = config;
 
   const url = getRequestURL(event);
 
-  // Only intercept /api paths, but skip Nuxt-internal and local mock routes
+  // Only intercept /api paths; anything served by the Nuxt app itself
+  // (internal routes, local server routes, mocks) stays local.
   if (!url.pathname.startsWith("/api")) return;
-  if (url.pathname.startsWith("/api/_nuxt_icon")) return;
-  if (url.pathname.startsWith("/api/mock")) return;
+  if (skipPaths.some((prefix) => url.pathname.startsWith(prefix))) return;
 
   const rewrittenPath = applyPathRewrite(url.pathname, base, customPathRewrite);
   const targetUrl = `${server}${rewrittenPath}${url.search}`;
@@ -100,9 +120,18 @@ export default defineEventHandler(async (event) => {
 
   // --- Proxy the request ---
   const method = event.method;
-  const body = ["GET", "HEAD"].includes(method)
+  // `false` returns a Buffer; the default ("utf8") would decode binary bodies and
+  // corrupt every multipart upload.
+  const rawBody = ["GET", "HEAD"].includes(method)
     ? undefined
-    : await readRawBody(event);
+    : await readRawBody(event, false);
+  // `fetch` accepts a Buffer at runtime, but the DOM lib types `BufferSource` as
+  // `ArrayBufferView<ArrayBuffer>` while Node types `Buffer` as
+  // `Uint8Array<ArrayBufferLike>` — the wider generic also admits
+  // `SharedArrayBuffer`, so it is rejected. `readRawBody` always builds the
+  // Buffer with `Buffer.concat`/`Buffer.from`, which allocate over a plain
+  // `ArrayBuffer`, so narrowing the generic is safe and copies nothing.
+  const body = rawBody as Uint8Array<ArrayBuffer> | undefined;
 
   let response: Response;
   try {
@@ -119,10 +148,12 @@ export default defineEventHandler(async (event) => {
     );
   }
 
-  // --- Forward response headers (excluding set-cookie, handled separately) ---
+  // --- Forward response headers (set-cookie handled separately below) ---
   const responseHeaders: Record<string, string> = {};
   response.headers.forEach((value, key) => {
-    if (key.toLowerCase() !== "set-cookie") responseHeaders[key] = value;
+    if (!SKIP_RESPONSE_HEADERS.has(key.toLowerCase())) {
+      responseHeaders[key] = value;
+    }
   });
   setResponseHeaders(event, responseHeaders);
   setResponseStatus(event, response.status, response.statusText);

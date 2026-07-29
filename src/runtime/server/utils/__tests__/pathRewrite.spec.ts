@@ -3,6 +3,7 @@ import { buildDefaultRewrites, applyPathRewrite } from "../pathRewrite";
 import {
   CAMOMILLA_AUTH_LOGIN_PATH,
   CAMOMILLA_MEDIA_PATH,
+  CAMOMILLA_MENUS_PATH,
 } from "../../../constants";
 
 describe("pathRewrite", () => {
@@ -57,6 +58,21 @@ describe("pathRewrite", () => {
       const customRewrites = {};
       const result = applyPathRewrite("/api/auth/login", "", customRewrites);
       expect(result).toBe(CAMOMILLA_AUTH_LOGIN_PATH);
+    });
+
+    it("should rewrite the Menu Manager endpoint to Camomilla menus", () => {
+      expect(applyPathRewrite("/api/menus", "", {})).toBe(CAMOMILLA_MENUS_PATH);
+    });
+
+    it("should keep menu sub-resources under the Camomilla menus path", () => {
+      // The Menu Manager hits <endpoint>/page_types and <endpoint>/:id — the
+      // prefix rewrite must preserve whatever follows.
+      expect(applyPathRewrite("/api/menus/page_types", "", {})).toBe(
+        `${CAMOMILLA_MENUS_PATH}/page_types`,
+      );
+      expect(applyPathRewrite("/api/menus/12", "", {})).toBe(
+        `${CAMOMILLA_MENUS_PATH}/12`,
+      );
     });
 
     it("should collapse double slashes introduced by replacements", () => {
