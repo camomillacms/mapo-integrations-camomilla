@@ -1,3 +1,10 @@
+# [2.0.0-beta.3](https://github.com/camomillacms/mapo-integrations-camomilla/compare/v2.0.0-beta.2...v2.0.0-beta.3) (2026-07-29)
+
+
+### Features
+
+* add support for skipPaths in Camomilla integration and update path rewrites for menus ([b489dee](https://github.com/camomillacms/mapo-integrations-camomilla/commit/b489deeee561240a0bec939de6c28010ac442d0d))
+
 # [2.0.0-beta.2](https://github.com/camomillacms/mapo-integrations-camomilla/compare/v2.0.0-beta.1...v2.0.0-beta.2) (2026-07-16)
 
 
