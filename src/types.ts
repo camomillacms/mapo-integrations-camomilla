@@ -17,6 +17,17 @@ export interface CamomillaOptions {
   forwardedHeaders?: string[];
   /** Custom path rewrites merged after the built-in ones. Key = regex string, value = replacement. */
   pathRewrite?: CamomillaPathRewrite;
+  /**
+   * `/api/*` prefixes the proxy must NOT intercept, so they keep being served
+   * by the Nuxt app itself (own server routes, local mocks…).
+   *
+   * The values configured here are appended to the built-in defaults
+   * (`/api/_nuxt_icon`, `/api/mock`) rather than replacing them.
+   *
+   * @example
+   * camomilla: { skipPaths: ['/api/webhooks'] }
+   */
+  skipPaths?: string[];
 }
 
 /** Shape stored in runtimeConfig (private, server-only). */

@@ -1,6 +1,7 @@
 import { defineNuxtModule, addServerHandler, createResolver } from "@nuxt/kit";
 import type { NuxtModule } from "@nuxt/schema";
 import type { CamomillaOptions } from "./types";
+import { PROXY_SKIP_PATHS } from "./runtime/constants";
 
 /** Public module option type export. */
 export type { CamomillaOptions } from "./types";
@@ -24,6 +25,7 @@ export default defineNuxtModule<CamomillaOptions>({
     syncCamomillaSession: false,
     forwardedHeaders: [],
     pathRewrite: {},
+    skipPaths: [],
   },
 
   setup(options, nuxt) {
@@ -36,6 +38,9 @@ export default defineNuxtModule<CamomillaOptions>({
       syncCamomillaSession: options.syncCamomillaSession ?? false,
       forwardedHeaders: options.forwardedHeaders ?? [],
       pathRewrite: options.pathRewrite ?? {},
+      // User prefixes extend the built-ins instead of replacing them, so a
+      // consumer adding its own skip cannot accidentally proxy Nuxt internals.
+      skipPaths: [...PROXY_SKIP_PATHS, ...(options.skipPaths ?? [])],
     };
 
     // Server middleware: intercepts /api/* and proxies to Camomilla
