@@ -1,3 +1,10 @@
+# [2.0.0-beta.4](https://github.com/camomillacms/mapo-integrations-camomilla/compare/v2.0.0-beta.3...v2.0.0-beta.4) (2026-08-26)
+
+
+### Bug Fixes
+
+* fix baseurl redirects ([5f9916e](https://github.com/camomillacms/mapo-integrations-camomilla/commit/5f9916ed2c0bc4d907c5a9b46f557cdc7cf143ac))
+
 # [2.0.0-beta.3](https://github.com/camomillacms/mapo-integrations-camomilla/compare/v2.0.0-beta.2...v2.0.0-beta.3) (2026-07-29)
 
 
