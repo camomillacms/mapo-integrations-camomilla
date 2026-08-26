@@ -1,6 +1,5 @@
 import {
   defineEventHandler,
-  getRequestURL,
   getRequestHeaders,
   readRawBody,
   setResponseHeaders,
@@ -70,7 +69,23 @@ export default defineEventHandler(async (event) => {
     skipPaths = [],
   } = config;
 
-  const url = getRequestURL(event);
+  // `event.node.req.url` is the app-relative, still-percent-encoded request target:
+  // h3 has already stripped `app.baseURL` from it (dist/index.mjs:2016).
+  //
+  // `getRequestURL()` must NOT be used here — it prefers `req.originalUrl`, which
+  // Nitro captures BEFORE that strip, so on a sub-path deploy
+  // (`app: { baseURL: "/backoffice/" }`) it yields "/backoffice/api/…", the `/api`
+  // guard below never matches, and every proxied call — login included — falls
+  // through to the page router and 404s.
+  //
+  // `event.path` is not a substitute either: h3 percent-decodes it, so an encoded
+  // "?" in a permalink would split as a query separator, and it leaves dot segments
+  // unresolved — which would let "/api/../x" past the guard below and reach the
+  // backend as "/x". Parsing through `URL` keeps the encoding and normalises both.
+  const url = new URL(
+    (event.node.req.url || event.path).replace(/^[/\\]+/g, "/"),
+    "http://nitro.internal",
+  );
 
   // Only intercept /api paths; anything served by the Nuxt app itself
   // (internal routes, local server routes, mocks) stays local.
