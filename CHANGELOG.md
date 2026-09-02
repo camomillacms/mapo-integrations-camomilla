@@ -1,3 +1,10 @@
+# [2.0.0-beta.5](https://github.com/camomillacms/mapo-integrations-camomilla/compare/v2.0.0-beta.4...v2.0.0-beta.5) (2026-09-02)
+
+
+### Bug Fixes
+
+* fix OPTION methon in proxy ([1069da9](https://github.com/camomillacms/mapo-integrations-camomilla/commit/1069da99e5da2836428793c97cca8ec74d64ce89))
+
 # [2.0.0-beta.4](https://github.com/camomillacms/mapo-integrations-camomilla/compare/v2.0.0-beta.3...v2.0.0-beta.4) (2026-08-26)
 
 
