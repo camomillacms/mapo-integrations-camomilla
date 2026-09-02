@@ -26,6 +26,21 @@ function eventUnderBase(rawTarget: string, base = "/backoffice") {
   return createEvent(req, new ServerResponse(req));
 }
 
+/**
+ * Same event, but with a method and a body already attached — `readRawBody`
+ * reads `req.rawBody` when it is set, so nothing waits on a stream that a
+ * synthetic socket never ends.
+ */
+function eventWithMethod(method: string, target = "/api/camomilla/articles/") {
+  const req = new IncomingMessage(new Socket());
+  req.method = method;
+  req.url = target;
+  req.headers.host = "localhost:3000";
+  (req as IncomingMessage & { rawBody?: Buffer }).rawBody =
+    Buffer.from("payload");
+  return createEvent(req, new ServerResponse(req));
+}
+
 describe("proxy middleware", () => {
   let fetchMock: ReturnType<typeof vi.fn>;
 
@@ -59,5 +74,24 @@ describe("proxy middleware", () => {
       "http://django:8000/api/camomilla/pages/foo%3Fbar/",
       expect.anything(),
     );
+  });
+
+  // Regression guard: `readRawBody` asserts the method against h3's PayloadMethods
+  // and throws 405 for everything else, so reading a body for "not GET/HEAD" broke
+  // every OPTIONS call — which is how MapoDetail asks an endpoint to describe itself.
+  it("proxies OPTIONS instead of 405ing on the body read", async () => {
+    await proxy(eventWithMethod("OPTIONS"));
+
+    const call = fetchMock.mock.calls[0]!;
+    expect(call[0]).toBe("http://django:8000/api/camomilla/articles/");
+    expect((call[1] as RequestInit).method).toBe("OPTIONS");
+    expect((call[1] as RequestInit).body).toBeUndefined();
+  });
+
+  it("still forwards the body of a write", async () => {
+    await proxy(eventWithMethod("POST"));
+
+    const body = (fetchMock.mock.calls[0]![1] as RequestInit).body;
+    expect(Buffer.from(body as Uint8Array).toString()).toBe("payload");
   });
 });

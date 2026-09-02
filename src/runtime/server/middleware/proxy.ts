@@ -29,6 +29,17 @@ const SKIP_REQUEST_HEADERS = new Set([
 ]);
 
 /**
+ * Methods whose body h3 will hand over.
+ *
+ * An allowlist, not "everything except GET/HEAD": `readRawBody` runs
+ * `assertMethod` against exactly this list and throws 405 for anything else, so
+ * asking it for an OPTIONS body killed the request before it was ever proxied.
+ * OPTIONS is how MapoDetail reads `lang_info` and the form `schema`, so the
+ * whole describe-the-endpoint path 405'd behind this proxy.
+ */
+const PAYLOAD_METHODS = new Set(["PATCH", "POST", "PUT", "DELETE"]);
+
+/**
  * Upstream response headers dropped before forwarding.
  *
  * `fetch` transparently decodes the upstream body (gzip/br/deflate), so the
@@ -137,9 +148,9 @@ export default defineEventHandler(async (event) => {
   const method = event.method;
   // `false` returns a Buffer; the default ("utf8") would decode binary bodies and
   // corrupt every multipart upload.
-  const rawBody = ["GET", "HEAD"].includes(method)
-    ? undefined
-    : await readRawBody(event, false);
+  const rawBody = PAYLOAD_METHODS.has(method)
+    ? await readRawBody(event, false)
+    : undefined;
   // `fetch` accepts a Buffer at runtime, but the DOM lib types `BufferSource` as
   // `ArrayBufferView<ArrayBuffer>` while Node types `Buffer` as
   // `Uint8Array<ArrayBufferLike>` — the wider generic also admits

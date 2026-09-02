@@ -9,7 +9,15 @@ export interface CamomillaPathRewrite {
 export interface CamomillaOptions {
   /** URL of the Camomilla CMS backend, e.g. "http://localhost:8000" */
   server: string;
-  /** API base prefix used by the Nuxt app, e.g. "" or "myapp". Defaults to "". */
+  /**
+   * Extra path prefix that is really present in the incoming request path.
+   * It is prepended to every built-in rewrite pattern (a leading "/" is added
+   * if missing, trailing ones are stripped), e.g. "" or "myapp". Defaults to "".
+   *
+   * NOT the Nuxt router base (`app.baseURL`): h3 has already stripped that from
+   * the request target the proxy reads, so setting it here makes every built-in
+   * rewrite expect a prefix that is no longer there and nothing matches.
+   */
   base?: string;
   /** When true, a login on Django admin also logs in Mapo and vice-versa (shared sessionid). */
   syncCamomillaSession?: boolean;

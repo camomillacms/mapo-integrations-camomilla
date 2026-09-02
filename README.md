@@ -29,6 +29,7 @@ export default defineNuxtConfig({
 ## What it does
 
 - **Path rewriting**: `/api/auth/login` → `/api/camomilla/auth/login/`, `/api/profiles/me` → `/api/camomilla/users/current/`, `/api/media[-folders]` → `/api/camomilla/media[-folders]`, `/api/menus` → `/api/camomilla/menus`. Custom rewrites can be added via the `pathRewrite` option.
+- **Sub-path deploys**: the proxy matches on the app-relative path — h3 has already stripped `app.baseURL` by the time the middleware sees the request — so serving the app under `/backoffice/` works with no extra config. Leave `base: ""`: it is only for an API prefix that is literally present in the incoming request path, not for the app's base URL.
 - **Skip list**: `/api/_nuxt_icon` and `/api/mock` are never proxied. Add your own prefixes with `skipPaths: ['/api/webhooks']` to keep local server routes local — the values are appended to the built-in defaults, never replace them.
 - **Cookie sync**: maps Mapo's `__mapo_session` to Django's `sessionid` on outgoing requests, and aliases `sessionid` back to `__mapo_session` on auth-path responses.
 - **CSRF**: forwards `csrftoken` as `X-CSRFToken` on every non-login request.
