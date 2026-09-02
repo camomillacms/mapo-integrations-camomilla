@@ -36,7 +36,24 @@ export interface CamomillaOptions {
    * camomilla: { skipPaths: ['/api/webhooks'] }
    */
   skipPaths?: string[];
+  /**
+   * Register the Camomilla media adapter (`$mapoMediaAdapter`), which maps the
+   * Media Manager's canonical params to Camomilla's dialect: the mime filter to
+   * `fltr`, folder payloads to `title`/`slug`/`updir`, media detail reads to
+   * `language_code`, and file replacement to `same_url`.
+   *
+   * Defaults to true. Set false to keep uikit's plain-REST default adapter,
+   * which Camomilla ignores — its `mime` param does not exist server-side.
+   */
+  mediaAdapter?: boolean;
 }
 
-/** Shape stored in runtimeConfig (private, server-only). */
-export type CamomillaRuntimeConfig = Required<CamomillaOptions>;
+/**
+ * Shape stored in runtimeConfig (private, server-only).
+ *
+ * `mediaAdapter` is build-time only: it decides whether a plugin is registered,
+ * so it never reaches the running server.
+ */
+export type CamomillaRuntimeConfig = Required<
+  Omit<CamomillaOptions, "mediaAdapter">
+>;

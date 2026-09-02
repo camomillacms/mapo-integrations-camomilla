@@ -1,4 +1,9 @@
-import { defineNuxtModule, addServerHandler, createResolver } from "@nuxt/kit";
+import {
+  defineNuxtModule,
+  addServerHandler,
+  addPlugin,
+  createResolver,
+} from "@nuxt/kit";
 import type { NuxtModule } from "@nuxt/schema";
 import type { CamomillaOptions } from "./types";
 import { PROXY_SKIP_PATHS } from "./runtime/constants";
@@ -26,6 +31,7 @@ export default defineNuxtModule<CamomillaOptions>({
     forwardedHeaders: [],
     pathRewrite: {},
     skipPaths: [],
+    mediaAdapter: true,
   },
 
   setup(options, nuxt) {
@@ -48,5 +54,16 @@ export default defineNuxtModule<CamomillaOptions>({
       middleware: true,
       handler: resolver.resolve("./runtime/server/middleware/proxy"),
     });
+
+    // Client plugin: provide $mapoMediaAdapter speaking Camomilla's dialect.
+    // Ordered BEFORE uikit's fallback plugin (order 5): the first provider wins,
+    // because Nuxt provides are non-configurable getters and uikit's plugin bails
+    // out when `$mapoMediaAdapter` is already on the app.
+    if (options.mediaAdapter !== false) {
+      addPlugin({
+        src: resolver.resolve("./runtime/plugins/media-adapter"),
+        order: 4,
+      });
+    }
   },
 }) satisfies NuxtModule<CamomillaOptions>;
