@@ -1,3 +1,10 @@
+# [2.0.0-beta.6](https://github.com/camomillacms/mapo-integrations-camomilla/compare/v2.0.0-beta.5...v2.0.0-beta.6) (2026-09-02)
+
+
+### Features
+
+* add MediaAdapter migrated from main mapo-new ([635daae](https://github.com/camomillacms/mapo-integrations-camomilla/commit/635daaed938ad27ca042bc5bbedb4585e990b583))
+
 # [2.0.0-beta.5](https://github.com/camomillacms/mapo-integrations-camomilla/compare/v2.0.0-beta.4...v2.0.0-beta.5) (2026-09-02)
 
 
