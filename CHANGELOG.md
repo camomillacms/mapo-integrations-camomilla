@@ -1,3 +1,10 @@
+# [2.0.0-beta.7](https://github.com/camomillacms/mapo-integrations-camomilla/compare/v2.0.0-beta.6...v2.0.0-beta.7) (2026-10-29)
+
+
+### Bug Fixes
+
+* prefer the live Django session when syncing cookies ([b072a6d](https://github.com/camomillacms/mapo-integrations-camomilla/commit/b072a6dbe8ba23c638f29669c97b0a8dc5e98dc1))
+
 # [2.0.0-beta.6](https://github.com/camomillacms/mapo-integrations-camomilla/compare/v2.0.0-beta.5...v2.0.0-beta.6) (2026-09-02)
 
 
