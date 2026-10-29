@@ -18,7 +18,8 @@ export interface RequestCookieResult {
  * Prepares cookies for the outgoing proxied request.
  *
  * - Strips cookies not in CAMOMILLA_COOKIES
- * - Maps MAPO_SESSION_COOKIE → DJANGO_SESSION_COOKIE so Camomilla recognises its own Django cookie
+ * - Uses the Mapo session when isolated; when synced, prefers Django's session
+ *   and only falls back to the Mapo copy if the Django cookie is absent
  * - Adds X-CSRFToken from csrftoken cookie (except on login where the session is being reset)
  * - On login: clears session cookies so Django issues a fresh one
  */
@@ -41,13 +42,12 @@ export function buildRequestCookies(
     delete filtered[MAPO_SESSION_COOKIE];
     delete filtered[CSRF_COOKIE];
   } else {
-    if (filtered[MAPO_SESSION_COOKIE]) {
-      filtered[DJANGO_SESSION_COOKIE] = filtered[MAPO_SESSION_COOKIE]!;
+    const copy = filtered[MAPO_SESSION_COOKIE];
+    if (copy && (!syncSession || !filtered[DJANGO_SESSION_COOKIE])) {
+      filtered[DJANGO_SESSION_COOKIE] = copy;
     }
-    if (!syncSession && !isLogout) {
+    if (!syncSession && !isLogout && !copy) {
       delete filtered[DJANGO_SESSION_COOKIE];
-      if (filtered[MAPO_SESSION_COOKIE])
-        filtered[DJANGO_SESSION_COOKIE] = filtered[MAPO_SESSION_COOKIE]!;
     }
   }
 
