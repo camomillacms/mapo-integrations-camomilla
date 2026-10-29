@@ -30,7 +30,7 @@ export default defineNuxtConfig({
 
 - **Path rewriting**: `/api/auth/login` → `/api/camomilla/auth/login/`, `/api/profiles/me` → `/api/camomilla/users/current/`, `/api/media[-folders]` → `/api/camomilla/media[-folders]`, `/api/menus` → `/api/camomilla/menus`. Custom rewrites can be added via the `pathRewrite` option.
 - **Skip list**: `/api/_nuxt_icon` and `/api/mock` are never proxied. Add your own prefixes with `skipPaths: ['/api/webhooks']` to keep local server routes local — the values are appended to the built-in defaults, never replace them.
-- **Cookie sync**: maps Mapo's `__mapo_session` to Django's `sessionid` on outgoing requests, and aliases `sessionid` back to `__mapo_session` on auth-path responses.
+- **Cookie sync**: with `syncCamomillaSession: false`, maps Mapo's `__mapo_session` to Django's `sessionid` on outgoing requests. With sync enabled, the incoming `sessionid` is authoritative; the Mapo copy is only a fallback when it is absent. A login on the public site or Django admin can therefore rotate the session or change account without a stale Mapo copy overriding it. Auth-path responses still alias `sessionid` back to `__mapo_session`.
 - **CSRF**: forwards `csrftoken` as `X-CSRFToken` on every non-login request.
 - **Forwarded headers**: optional whitelist of extra request headers to forward to the Camomilla backend.
 
